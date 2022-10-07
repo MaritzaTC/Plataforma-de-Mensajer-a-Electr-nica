@@ -6,6 +6,8 @@ import envioemail
 
 app = Flask(__name__)
 
+origen=""
+
 @app.route("/")
 def hello_world():
     return render_template("login.html")
@@ -13,20 +15,22 @@ def hello_world():
 @app.route("/verificarUsuario", methods=["GET", "POST"])
 def verificarUsuario():
 
-    usuario=request.form["txtusuario"]
+    correo=request.form["txtusuario"]
     password=request.form["txtpass"]
 
     password2=password.encode()
     password2=hashlib.sha384(password2).hexdigest()
 
-    respuesta =controller.consultar_usuario(usuario, password2)
-
+    respuesta =controller.consultar_usuario(correo, password2)
+    global origen
     if len(respuesta)==0:
+        origen=""
         mensaje ="Error de autentificación, verifique su usuario y contraseña"
         return  render_template("informacion.html", datas=mensaje)
     else:
-        respuesta2=controller.lista_destinatarios(usuario)
-        return render_template("principal.html", datas=respuesta2)
+        origen=correo
+        respuesta2=controller.lista_destinatarios()
+        return render_template("principal.html", listaD=respuesta2,usuario=respuesta)
 
     
 @app.route("/registrarUsuario", methods=["GET", "POST"])
@@ -45,25 +49,14 @@ def registrarUsuario():
         codigo2=codigo2.replace(".","")
         codigo2=codigo2.replace(" ","")
         codigo2=codigo2.replace(":","")
-        print(codigo2)
+
+        controller.registrarUsuario(name,email,password2,codigo2)
         mensaje="Sr "+name+ ",su codigo de activacion es :\n\n"+codigo2+ "\n\n Recuerde copiarlo y pegarlo para validarlo en la seccion de login y activar su cuenta.\n\nMuchas Gracias"
-        envioemail.enviar(email,mensaje,"Codido de Activacion")
-        respuesta =controller.registrarUsuario(name,email,password2,codigo2)
-
-    
-        mensaje="El Usuario"+ name+ " se ha registrado satisfactoriamnete"
-        return  render_template("informacion.html", data=mensaje)
+        envioemail.enviar(email,"Codido de Activacion",mensaje)
         
-@app.route("/enviarMail", methods=["GET", "POST"])
-def enviarMail():
-    if request.method=="POST":
-        emailDestino=request.form["emailDestino"]
-        asunto=request.form["asunto"]
-        mensaje=request.form["mensaje"]
-        mensaje2="Sr Usuario, usted recibio un mensaje nuevo, por favor ingrese a la plataforma para observar su email en la pestaña historial \n \n Muchas gracias"
-        envioemail.enviar(emailDestino,mensaje2,"Nuevo Mensaje enviado")
-        return "Email enviado satisfactoriamente"
-
+        mensajes="El Usuario "+ name+ " se ha registrado satisfactoriamnete"
+        return  render_template("informacion.html", data=mensajes)
+        
 @app.route("/activarUsuario", methods=["GET", "POST"])
 def activarUsuario():
     if request.method=="POST":
@@ -76,4 +69,30 @@ def activarUsuario():
             mensaje="El usuario se ha registrado satisfactoriamente" 
 
         return render_template("informacion.html",datas=mensaje)
-   
+
+@app.route("/enviarED", methods=["GET", "POST"])
+def enviarED():
+   asunto=request.form["asunto"]
+   mensaje=request.form["mensaje"]
+   destino=request.form["destino"]
+   controller.registrarMail(asunto,mensaje,origen,destino)
+   envioemail.enviar(destino,"Nuevo mensaje", "Usted recibio un nuevo mensaje por favor ingrese a la plataforma")
+   return "Email enviado Satisfactoriamente"
+
+@app.route("/correosEnviados", methods=["GET", "POST"])
+def correosEnviados():
+    respuesta =controller.enviados(origen)
+    return render_template("historial.html",listaCorreos=respuesta)
+    
+@app.route("/correosRecibidos", methods=["GET", "POST"])
+def correosRecibidos():
+    respuesta =controller.recibidos(origen)
+    return render_template("historial.html",listaCorreos=respuesta)
+
+@app.route("/updatePass", methods=["GET", "POST"])
+def updatePass():
+    passw=request.form["password"]
+    password2=passw.encode()
+    password2=hashlib.sha384(password2).hexdigest()
+    controller.updatePassw(password2,origen)
+    return "La contraseña se ha actualizado correctamente"

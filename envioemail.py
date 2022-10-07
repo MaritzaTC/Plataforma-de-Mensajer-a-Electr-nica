@@ -1,14 +1,14 @@
 import smtplib 
 from email.message import EmailMessage 
 
-def enviar(email_destino,asunto):
+def enviar(email_destino,asunto,mensaje):
     email_origen="mtabarez@uninorte.edu.co"
     password="angostura1."
     email = EmailMessage()
     email["From"] = email_origen
     email["To"] = email_destino
-    email["Subject"] = "Codigo de Activacion"
-    email.set_content(asunto)
+    email["Subject"] = asunto
+    email.set_content(mensaje)
     # Send Email
     smtp = smtplib.SMTP("smtp-mail.outlook.com", port=587)
     smtp.starttls()

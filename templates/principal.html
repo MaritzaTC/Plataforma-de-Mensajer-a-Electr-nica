@@ -36,7 +36,7 @@
       <section class="content">
         <div class="container-fluid">
           <div class="contariner alert alert-info">
-            <h2>Center MAIL</h2>
+            <h2>Center MAIL -{{usuario[0].nombreUsuario}}</h2>
           </div>
 
 
@@ -45,11 +45,12 @@
               <!-- Custom Tabs -->
               <div class="card">
                 <div class="card-header d-flex p-0">
-                  <h3 class="card-title p-3">Center MAIL</h3>
+                  <h3 class="card-title p-3"><a href="/"><button class="btn  btn-danger">Regresar</button></a></h3>
                   <ul class="nav nav-pills ml-auto p-2">
                     <li class="nav-item"><a class="nav-link active" href="#tab_1" data-toggle="tab">Gestion de Envio</a>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="#tab_2" data-toggle="tab">Historial</a></li>
+                    <li class="nav-item" onclick="cargarHistorial()" ><a class="nav-link" href="#tab_2" data-toggle="tab">Historial</a></li>
+                    
                     <li class="nav-item"><a class="nav-link" href="#tab_3" data-toggle="tab">Perfil</a></li>
 
                   </ul>
@@ -57,31 +58,44 @@
                 <div class="card-body">
                   <div class="tab-content">
                     <div class="tab-pane active" id="tab_1">
-                      <form onsubmit="return enviarMail()">
+                      <form onsubmit="return enviarEmailD()">
                         <input required placeholder="Asunto:" id="txtAsunto" name="txtAsunto" class="form-control" type="text" max="50" />
                           <hr>
                         <select required class='form-control' name='sl_destino' id='sl_destino'>
                           <option value="">Selecione destinatario</option>
-                          {% for m in datas %}
+                          {% for m in listaD %}
                           <option value="{{ m['correo'] }}">{{ m['nombreUsuario'] }}</option>
                           {% endfor %}
                         </select>
                         <hr>
-                        <textarea placeholder="Mensaje:" id="txtMensaje" name="txtMensaje" class="form-control"></textarea>
+                        <textarea required placeholder="Mensaje:" id="txtMensaje" name="txtMensaje" class="form-control" max="300"></textarea>
                         <br>
                         <center><button class="btn btn-success" type="submit">Enviar</button></center>
                       </form>
                     </div>
                     <!-- /.tab-pane -->
                     <div class="tab-pane" id="tab_2">
-
-
+                      <div class="row">
+                        <div class="col-md-6" id="d_enviados" name="d_enviados">Enviados </div>
+                        <div class="col-md-6" id="d_recibidos" name="d_recibidos">Recibidos</div>
+                      </div>
+                      
+                      </div>
+                      <div class="tab-pane" id="tab_3">
+                        <center><h2>Actualizar Contraseña</h2></center>
+                        <form onsubmit="return updatePassword()">
+                          <input required type="password" class="form-control" placeholder="Nueva contraseña" id="txtPass1" name="txtPass1">
+                          <hr>
+                          <input required type="password" class="form-control" placeholder="Confirmar contraseña" id="txtPass2" name="txtPass1">
+                          <hr>
+                         <center><button type="submit" class="btn btn-warning">Actualizar</button></center> 
+                        </form>
+                        </div>
+                     
+                      </div>
                     </div>
                     <!-- /.tab-pane -->
-                    <div class="tab-pane" id="tab_3">
-
-
-                    </div>
+                    
                     <!-- /.tab-pane -->
                   </div>
                   <!-- /.tab-content -->
@@ -129,15 +143,60 @@
   <script src="https://adminlte.io/themes/v3/dist/js/pages/dashboard.js"></script>
 
   <script>
+   function updatePassword(){
+    if($("#txtPass1").val()==$("#txtPass2").val())
+    {
+      $.ajax({
+        url: 'updatePass',
+        data: "password="+$("#txtPass1").val(),
+        type : 'POST',
+        success : function(resp){
+                alert(resp);
+        },
+        error :function(xhr,status){
+          alert('Error intente en otro momento');
+        }
+   });
+    }else{
+      alert("las contraseñas no coinciden");
+    }
+   }
 
-  function enviarMail(){
+   function cargarHistorial(){
 
       $.ajax({
-        url: 'enviarMail',
-        data: "asunto="+$("#txtAsunto").val()+"$emailDestino="+$("#sl_destino").val()+"&mensaje="+$("#txtMensaje".val()),
+        url: 'correosEnviados',
+        data: "",
         type : 'POST',
-        success : function(r){
-                alert(r);
+        success : function(resp){
+                resp="<center><h2>Correos Enviados</h2></center>"+resp
+                $("#d_enviados").html(resp);
+        },
+        error :function(xhr,status){
+          alert('Error intente en otro momento');
+        }
+   });
+   $.ajax({
+        url: 'correosRecibidos',
+        data: "",
+        type : 'POST',
+        success : function(resp){
+                resp="<center><h2>Correos Recibidos</h2></center>"+resp
+                $("#d_recibidos").html(resp);
+        },
+        error :function(xhr,status){
+          alert('Error intente en otro momento');
+        }
+   });
+}
+  function enviarEmailD(){
+
+      $.ajax({
+        url: 'enviarED',
+        data: "asunto="+$("#txtAsunto").val()+"&mensaje="+$("#txtMensaje").val()+"&destino="+$("#sl_destino").val(),
+        type : 'POST',
+        success : function(resp){
+                alert(resp);
         },
         error :function(xhr,status){
           alert('Error intente en otro momento');
