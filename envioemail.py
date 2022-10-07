@@ -3,7 +3,7 @@ from email.message import EmailMessage
 
 def enviar(email_destino,asunto,mensaje):
     email_origen="mtabarez@uninorte.edu.co"
-    password="angostura1."
+    password=""#aqui va la contraseña
     email = EmailMessage()
     email["From"] = email_origen
     email["To"] = email_destino
