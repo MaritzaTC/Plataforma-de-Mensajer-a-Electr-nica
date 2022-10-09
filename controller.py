@@ -1,43 +1,58 @@
 import sqlite3
 
-    
 def consultar_usuario(correo, password):
     db=sqlite3.connect("mensajes.s3db")
     db.row_factory=sqlite3.Row
     cursor=db.cursor()
-    consulta="select *from usuarios where correo='"+correo+"'and password='"+password+"'and estado='1'"
+    consulta="select *from usuarios where correo='"+correo+"' and password='"+password+"' and estado='1'"
     cursor.execute(consulta)
-    result=cursor.fetchall()
-    return result
+    return cursor.fetchall()
 
-def lista_destinatarios():
+def lista_destinatarios(correo):
     db=sqlite3.connect("mensajes.s3db")
     db.row_factory=sqlite3.Row
     cursor=db.cursor()
-    consulta="select *from usuarios where estado='1'"
+    consulta="select *from usuarios where  estado='1' and correo<>'"+correo+"'"
     cursor.execute(consulta)
-    result=cursor.fetchall()
-    return result
-    
+    return cursor.fetchall()
+
+
 def enviados(correo):
     db=sqlite3.connect("mensajes.s3db")
     db.row_factory=sqlite3.Row
     cursor=db.cursor()
-    consulta="select m.asunto,m.mensaje,m.fecha,m.hora, u.nombreUsuario from mensajeria m, usuarios u where m.origen='"+correo+"' and m.destino=u.correo"
+    consulta="select m.asunto,m.mensaje,m.fecha,m.hora, u.nombreusuario  from mensajeria m, usuarios u where m.origen='"+correo+"' and m.destino=u.correo"
     cursor.execute(consulta)
-    result=cursor.fetchall()
-    return result
+    return cursor.fetchall()
 
 def recibidos(correo):
     db=sqlite3.connect("mensajes.s3db")
     db.row_factory=sqlite3.Row
     cursor=db.cursor()
-    consulta="select m.asunto,m.mensaje,m.fecha,m.hora, u.nombreUsuario from mensajeria m, usuarios u where m.destino='"+correo+"' and m.origen=u.correo"
+    consulta="select m.asunto,m.mensaje,m.fecha,m.hora, u.nombreusuario  from mensajeria m, usuarios u where m.destino='"+correo+"' and m.origen=u.correo"
     cursor.execute(consulta)
-    result=cursor.fetchall()
-    return result
-    
-def registrarMail(asunto,mensaje,origen,destino):
+    return cursor.fetchall()
+
+
+def regisUsuario(nombe,correo, password,codigo):
+    db=sqlite3.connect("mensajes.s3db")
+    db.row_factory=sqlite3.Row
+    cursor=db.cursor()
+    consulta="insert into usuarios (nombreusuario,correo,password,estado,codigoactivacion) values ('"+nombe+"','"+correo+"','"+password+"','0','"+codigo+"')"
+    cursor.execute(consulta)
+    db.commit()
+    return "1"
+
+def actualziarPassW(pwd, correo):
+    db=sqlite3.connect("mensajes.s3db")
+    db.row_factory=sqlite3.Row
+    cursor=db.cursor()
+    consulta="update usuarios set password='"+pwd+"' where correo='"+correo+"' "
+    cursor.execute(consulta)
+    db.commit()
+    return "1"
+
+def registroEMail(asunto,mensaje,origen,destino):
     db=sqlite3.connect("mensajes.s3db")
     db.row_factory=sqlite3.Row
     cursor=db.cursor()
@@ -46,32 +61,16 @@ def registrarMail(asunto,mensaje,origen,destino):
     db.commit()
     return "1"
 
-def registrarUsuario(name,email, password,codigo):
-    db=sqlite3.connect("mensajes.s3db")
-    db.row_factory=sqlite3.Row
-    cursor=db.cursor()
-    consulta="insert into usuarios (nombreUsuario,correo,password,estado,codigoactivacion) values ('"+name+"','"+email+"','"+password+"','0','"+codigo+"')"
-    cursor.execute(consulta)
-    db.commit()
-    return "1"
 
-def updatePassw(pwd,correo):
-    db=sqlite3.connect("mensajes.s3db")
-    db.row_factory=sqlite3.Row
-    cursor=db.cursor()
-    consulta="update usuarios set password='"+pwd+"' where correo='"+correo+"'"
-    db.commit()
-    return "1"
-    
-def activarUsuario(codigo):
+def activarU(codigo):
     db=sqlite3.connect("mensajes.s3db")
     db.row_factory=sqlite3.Row
     cursor=db.cursor()
     consulta="update usuarios set estado='1' where codigoactivacion='"+codigo+"'"
     cursor.execute(consulta)
     db.commit()
-    consulta2="select *from usuarios where codigoactivacion='"+codigo+"'and estado='1'"
-    cursor.execute(consulta2)
-    result=cursor.fetchall()
-    return result
-    return "1"
+    
+    consulta="select *from usuarios where codigoactivacion='"+codigo+"' and estado='1'"
+    cursor.execute(consulta)
+    return cursor.fetchall()
+
