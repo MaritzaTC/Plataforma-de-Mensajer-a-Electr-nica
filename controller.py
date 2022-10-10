@@ -51,7 +51,14 @@ def actualziarPassW(pwd, correo):
     cursor.execute(consulta)
     db.commit()
     return "1"
-
+def deleteMensaje(id):
+    db=sqlite3.connect("mensajes.s3db")
+    db.row_factory=sqlite3.Row
+    cursor=db.cursor()
+    consulta="delete into mensajeria (id)  values('"+id+"')"
+    cursor.execute(consulta)
+    db.commit()
+    return "1"
 def registroEMail(asunto,mensaje,origen,destino):
     db=sqlite3.connect("mensajes.s3db")
     db.row_factory=sqlite3.Row
