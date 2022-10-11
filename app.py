@@ -15,8 +15,9 @@ def hello_world():
 def verifciarUsuario():
     
     correo=request.form["txtusuario"]
+    correo=correo.replace("''","=====89988====73828ssss==").replace("SELECT","").replace("INSERT","").replace("UPDATE","").replace("DELETE","").replace("DROP","").replace("select","").replace("insert","").replace("update","").replace("delete","").replace("drop","")
     password=request.form["txtpass"]
-    
+    password=password.replace("''","=====89988====73828ssss==").replace("SELECT","").replace("INSERT","").replace("UPDATE","").replace("DELETE","").replace("DROP","").replace("select","").replace("insert","").replace("update","").replace("delete","").replace("drop","")
     password2=password.encode()
     password2=hashlib.sha384(password2).hexdigest()
     
@@ -40,9 +41,11 @@ def verifciarUsuario():
 def registrarUsuario():
     
     nombre=request.form["txtnombre"]
+    nombre=nombre.replace("''","=====89988====73828ssss==").replace("SELECT","").replace("INSERT","").replace("UPDATE","").replace("DELETE","").replace("DROP","").replace("select","").replace("insert","").replace("update","").replace("delete","").replace("drop","")
     correo=request.form["txtusuarioregistro"]
+    correo=correo.replace("''","=====89988====73828ssss==").replace("SELECT","").replace("INSERT","").replace("UPDATE","").replace("DELETE","").replace("DROP","").replace("select","").replace("insert","").replace("update","").replace("delete","").replace("drop","")
     password=request.form["txtpassregistro"]
-    
+    password=password.replace("''","=====89988====73828ssss==").replace("SELECT","").replace("INSERT","").replace("UPDATE","").replace("DELETE","").replace("DROP","").replace("select","").replace("insert","").replace("update","").replace("delete","").replace("drop","")
     password2=password.encode()
     password2=hashlib.sha384(password2).hexdigest()
     
@@ -53,13 +56,15 @@ def registrarUsuario():
     codigo2=codigo2.replace(".","")
     codigo2=codigo2.replace(" ","")
     
-    controller.regisUsuario(nombre,correo,password2,codigo2)
+    resp=controller.regisUsuario(nombre,correo,password2,codigo2)
+    if resp=="1":
+        asunto="Codigo de activacion"
+        mensaje="su codigo de activacion es "+codigo2
+        envioemail.enviar(correo,asunto,mensaje)
     
-    asunto="Codigo de activacion"
-    mensaje="su codigo de activacion es "+codigo2;
-    envioemail.enviar(correo,asunto,mensaje)
-    
-    mensajes= "Usuario registrado satisfactoriamente..."
+        mensajes= "Usuario registrado satisfactoriamente..."
+    else:
+        mensajes="Error, no es posible realizar el registro, el usuario y/o correo ya existe."
     return render_template("informacion.html",data=mensajes)
 
 
@@ -67,7 +72,7 @@ def registrarUsuario():
 def ActivarUsuario():
     
     codigo=request.form["txtcodigo"]
-    
+    codigo=codigo.replace("''","=====89988====73828ssss==").replace("SELECT","").replace("INSERT","").replace("UPDATE","").replace("DELETE","").replace("DROP","").replace("select","").replace("insert","").replace("update","").replace("delete","").replace("drop","")
     respuesta=controller.activarU(codigo)
     if len(respuesta)==0:
         mensajes= "El codigo es incorrecto"
@@ -81,8 +86,11 @@ def ActivarUsuario():
 def enviarEE():
     
     asunto=request.form["asunto"]
+    asunto=asunto.replace("''","=====89988====73828ssss==").replace("SELECT","").replace("INSERT","").replace("UPDATE","").replace("DELETE","").replace("DROP","").replace("select","").replace("insert","").replace("update","").replace("delete","").replace("drop","")
     mensaje=request.form["mensaje"]
+    mensaje=mensaje.replace("''","=====89988====73828ssss==").replace("SELECT","").replace("INSERT","").replace("UPDATE","").replace("DELETE","").replace("DROP","").replace("select","").replace("insert","").replace("update","").replace("delete","").replace("drop","")
     destino=request.form["destino"]
+    destino=destino.replace("''","=====89988====73828ssss==").replace("SELECT","").replace("INSERT","").replace("UPDATE","").replace("DELETE","").replace("DROP","").replace("select","").replace("insert","").replace("update","").replace("delete","").replace("drop","")
     
     controller.registroEMail(asunto,mensaje,origen,destino)
     
@@ -106,20 +114,19 @@ def correosEnviados():
 def correosRecibidos():
     
     respuesta=controller.recibidos(origen)
-    return render_template("historial.html",listaCorreos=respuesta)
+    return render_template("historial2.html",listaCorreos=respuesta)
 
 
 @app.route("/actualizarPa",methods=["GET","POST"])
 def actualizarPa():
     password=request.form["password"]
-    
+    password=password.replace("''","=====89988====73828ssss==").replace("SELECT","").replace("INSERT","").replace("UPDATE","").replace("DELETE","").replace("DROP","").replace("select","").replace("insert","").replace("update","").replace("delete","").replace("drop","")
     password2=password.encode()
     password2=hashlib.sha384(password2).hexdigest()
     
     controller.actualziarPassW(password2,origen)
     
     return "La contraseña se ha actualizado correctamente"
-    
     
     
     

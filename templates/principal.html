@@ -16,6 +16,7 @@
   <link rel="stylesheet" href="https://adminlte.io/themes/v3/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
   <link rel="stylesheet" href="https://adminlte.io/themes/v3/plugins/daterangepicker/daterangepicker.css">
   <link rel="stylesheet" href="https://adminlte.io/themes/v3/plugins/summernote/summernote-bs4.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 <div class="wrapper">
@@ -52,7 +53,7 @@
                   <div class="tab-content">
                     <div class="tab-pane active" id="tab_1">
                       
-                      <form onsubmit="return EnviarEmailEmpleado()">
+                      <form onsubmit="return EnviarEmailE()">
                         <input class="form-control" required type="text" placeholder="Asunto:" id='txtasunto' name="txtasunto">
                         <hr>
                         <select required class="form-control" id="sl_destino" name="sl_destino">
@@ -137,10 +138,11 @@
 <script src="https://adminlte.io/themes/v3/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
 <script src="https://adminlte.io/themes/v3/dist/js/adminlte.js"></script>
 <script src="https://adminlte.io/themes/v3/dist/js/pages/dashboard.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
 
 <script>
 
-  function EnviarEmailEmpleado(){
+  function EnviarEmailE(){
 
     $.ajax({
       url : "enviarEE",
@@ -166,6 +168,7 @@ function cargarHistorial(){
     success : function(resp) {
             resp="<center><h2>Correos Enviados</h2></center>"+resp
             $("#d_enviados").html(resp);
+            $("#t_correos").DataTable();
     },
     error : function(xhr, status) {
         alert('Error intente en otro momento');
@@ -179,6 +182,7 @@ function cargarHistorial(){
   success : function(resp) {
           resp="<center><h2>Correos Recibidos</h2></center>"+resp
           $("#d_recibidos").html(resp);
+          $("#t_correos2").DataTable();
   },
   error : function(xhr, status) {
       alert('Error intente en otro momento');

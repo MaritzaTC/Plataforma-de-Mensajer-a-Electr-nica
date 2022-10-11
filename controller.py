@@ -35,13 +35,16 @@ def recibidos(correo):
 
 
 def regisUsuario(nombe,correo, password,codigo):
-    db=sqlite3.connect("mensajes.s3db")
-    db.row_factory=sqlite3.Row
-    cursor=db.cursor()
-    consulta="insert into usuarios (nombreusuario,correo,password,estado,codigoactivacion) values ('"+nombe+"','"+correo+"','"+password+"','0','"+codigo+"')"
-    cursor.execute(consulta)
-    db.commit()
-    return "1"
+    try:
+        db=sqlite3.connect("mensajes.s3db")
+        db.row_factory=sqlite3.Row
+        cursor=db.cursor()
+        consulta="insert into usuarios (nombreusuario,correo,password,estado,codigoactivacion) values ('"+nombe+"','"+correo+"','"+password+"','0','"+codigo+"')"
+        cursor.execute(consulta)
+        db.commit()
+        return "1"
+    except:
+        return "0"
 
 def actualziarPassW(pwd, correo):
     db=sqlite3.connect("mensajes.s3db")
